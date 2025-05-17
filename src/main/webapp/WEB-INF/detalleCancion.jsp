@@ -13,5 +13,8 @@
 		<div>
 			<a href="/canciones"> Volver a canciones </a>
 		</div>
+		<form action="/canciones/formulario/editar/${cancionActual.id}" method="GET">
+				<button type="submit"> Editar canción </button>
+		</form>
 	</body>
 </html>
