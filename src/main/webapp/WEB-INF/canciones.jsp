@@ -23,5 +23,8 @@
 			</tr>
 			</c:forEach>
 		</table>
+		<form action="/canciones/formulario/agregar" method="GET">
+				<button type="submit"> Agregar canción </button>
+		</form>
 	</body>
 </html>
