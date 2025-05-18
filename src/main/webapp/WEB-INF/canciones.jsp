@@ -18,7 +18,7 @@
 			<c:forEach var="cancion" items="${listaCanciones}">
 			<tr>
 				<td> ${cancion.titulo} </td>
-				<td> ${cancion.artista} </td>
+				<td> ${cancion.artista.nombre} ${cancion.artista.apellido} </td>
 				<td> <a href="/canciones/detalle/${cancion.id}"> Detalle </a> </td>
 				<td> <a href="/canciones/formulario/editar/${cancion.id}"> Editar </a> </td>
 			</tr>
@@ -27,5 +27,8 @@
 		<form action="/canciones/formulario/agregar" method="GET">
 				<button type="submit"> Agregar canción </button>
 		</form>
+		<div>
+			<a href="/artistas"> Ir a Artistas </a>
+		</div>
 	</body>
 </html>

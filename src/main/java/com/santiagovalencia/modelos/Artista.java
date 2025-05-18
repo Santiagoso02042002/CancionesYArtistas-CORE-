@@ -1,16 +1,18 @@
 package com.santiagovalencia.modelos;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -19,29 +21,25 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "canciones")
-public class Cancion {
+@Table(name = "artistas")
+public class Artista {
 	
 	// atributos
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Size(min = 5, message = "Proporciona un título con mínimo 5 caracteres de longitud")
-	private String titulo;
+	@Size(min = 5, message = "Por favor proporciona un nombre con mínimo 5 caracteres.")
+	private String nombre;
 	
-	@ManyToOne
-	@JoinColumn(name = "id_artista")
-	private Artista artista;
+	@Size(min = 3, message = "Por favor proporciona un apellido con mínimo 3 caracteres.")
+	private String apellido;
 	
-	@Size(min = 3, message = "Proporciona un álbum con mínimo 3 caracteres de longitud")
-	private String album;
+	@Size(min = 10, max = 100, message = "Por favor proporciona una biografía de mínimo 10 caracteres y máximo 100.")
+	private String biografia;
 	
-	@Size(min = 3, message = "Proporciona un género con mínimo 3 caracteres de longitud")
-	private String genero;
-	
-	@Size(min = 3, message = "Proporciona un idioma con mínimo 3 caracteres de longitud")
-	private String idioma;
+	@OneToMany(mappedBy = "artista", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Cancion> canciones;
 	
 	@Column(updatable = false, name = "fecha_creacion")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -65,8 +63,8 @@ public class Cancion {
 		this.fechaActualizacion = new Date();
 	}
 	
-	// constructor vacío necesario para JPA
-	public Cancion() {}
+	// constructor vacio necesario para JPA
+	public Artista() {}
 	
 	// getters y setters
 	public Long getId() {
@@ -77,44 +75,36 @@ public class Cancion {
 		this.id = id;
 	}
 
-	public String getTitulo() {
-		return titulo;
+	public String getNombre() {
+		return nombre;
 	}
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 
-	public Artista getArtista() {
-		return artista;
+	public String getApellido() {
+		return apellido;
 	}
 
-	public void setArtista(Artista artista) {
-		this.artista = artista;
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
 	}
 
-	public String getAlbum() {
-		return album;
+	public String getBiografia() {
+		return biografia;
 	}
 
-	public void setAlbum(String album) {
-		this.album = album;
+	public void setBiografia(String biografia) {
+		this.biografia = biografia;
 	}
 
-	public String getGenero() {
-		return genero;
+	public List<Cancion> getCanciones() {
+		return canciones;
 	}
 
-	public void setGenero(String genero) {
-		this.genero = genero;
-	}
-
-	public String getIdioma() {
-		return idioma;
-	}
-
-	public void setIdioma(String idioma) {
-		this.idioma = idioma;
+	public void setCanciones(List<Cancion> canciones) {
+		this.canciones = canciones;
 	}
 
 	public Date getFechaCreacion() {

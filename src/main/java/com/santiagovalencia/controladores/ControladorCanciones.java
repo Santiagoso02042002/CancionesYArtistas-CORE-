@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.santiagovalencia.modelos.Artista;
 import com.santiagovalencia.modelos.Cancion;
+import com.santiagovalencia.servicios.ServicioArtistas;
 import com.santiagovalencia.servicios.ServicioCanciones;
 
 import jakarta.validation.Valid;
@@ -25,9 +28,12 @@ public class ControladorCanciones {
 	
 	@Autowired
 	private final ServicioCanciones servicioCanciones;
+	private final ServicioArtistas servicioArtistas;
 	
-	public ControladorCanciones(ServicioCanciones servicioCanciones) {
+	public ControladorCanciones(ServicioCanciones servicioCanciones,
+								ServicioArtistas servicioArtistas) {
 		this.servicioCanciones = servicioCanciones;
+		this.servicioArtistas = servicioArtistas;
 	}
 	
 	@GetMapping("")
@@ -46,16 +52,22 @@ public class ControladorCanciones {
 	}
 	
 	@GetMapping("/formulario/agregar")
-	public String formularioAgregarCancion(@ModelAttribute("cancion") Cancion cancion) {
+	public String formularioAgregarCancion(@ModelAttribute("cancion") Cancion cancion,
+										   Model modelo) {
+		List<Artista> listaArtistas = servicioArtistas.obtenerTodosLosArtistas();
+		modelo.addAttribute("listaArtistas", listaArtistas);
 		return "agregarCancion.jsp";
 	}
 	
 	@PostMapping("/procesa/agregar")
 	public String procesarAgregarCancion(@Valid @ModelAttribute("cancion") Cancion nuevaCancion,
-										 BindingResult validaciones) {
+										 BindingResult validaciones,
+										 @RequestParam("id_artista") Long id_artista) {
 		if(validaciones.hasErrors()) {
 			return "agregarCancion.jsp";
 		}
+		Artista artistaActual = servicioArtistas.obtenerArtistaPorId(id_artista);
+		nuevaCancion.setArtista(artistaActual);
 		this.servicioCanciones.agregarCancion(nuevaCancion);
 		return "redirect:/canciones";
 	}
@@ -65,7 +77,9 @@ public class ControladorCanciones {
 										  @PathVariable("idCancion") Long idCancion,
 										  Model modelo) {
 		Cancion cancionActual = this.servicioCanciones.obtenerCancionPorId(idCancion);
+		List<Artista> listaArtistas = servicioArtistas.obtenerTodosLosArtistas();
 		modelo.addAttribute("cancion", cancionActual);
+		modelo.addAttribute("listaArtistas", listaArtistas);
 		
 		return "editarCancion.jsp";
 	}
@@ -73,15 +87,15 @@ public class ControladorCanciones {
 	@PutMapping("/procesa/editar/{idCancion}")
 	public String procesarEditarCancion(@Valid @ModelAttribute("cancion") Cancion cancion,
 										BindingResult validaciones,
-										@PathVariable("idCancion") Long idCancion) {
+										@PathVariable("idCancion") Long idCancion,
+										@RequestParam("id_artista") Long id_artista) {
 		if(validaciones.hasErrors()) {
 			return "editarCancion.jsp";
 		}
-		
+		Artista artistaActual = servicioArtistas.obtenerArtistaPorId(id_artista);
+		cancion.setArtista(artistaActual);
 		cancion.setId(idCancion);
-		
 		this.servicioCanciones.actualizaCancion(cancion);
-		
 		return "redirect:/canciones";
 	}
 	
